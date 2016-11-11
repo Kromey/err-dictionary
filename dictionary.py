@@ -116,3 +116,25 @@ class Dictionary(BotPlugin):
                 antonyms=', '.join(results[0]['words']),
                 )
 
+    _rhyme_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes=rhyme&limitPerRelationshipType=15&api_key={API_KEY}'
+    @botcmd(split_args_with=None)
+    def rhyme(self, msg, args):
+        """
+        Look up rhymes for a word
+        """
+        word = args[0]
+
+        results = requests.get(
+                self._rhyme_api.format(
+                    word=word,
+                    API_KEY=self.config['WORDNIK_API_KEY'])
+                ).json()
+
+        if not results:
+            return "I couldn't find anything for that."
+
+        return "Rhymes for {word}:\n{rhymes}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
+                word=word,
+                rhymes=', '.join(results[0]['words']),
+                )
+
