@@ -72,68 +72,41 @@ class Dictionary(BotPlugin):
 
         return "\n".join(resp)
 
-    _synonym_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes=synonym&limitPerRelationshipType=15&api_key={API_KEY}'
     @botcmd(split_args_with=None)
     def synonym(self, msg, args):
         """
         Look up synonyms for a word
         """
-        word = args[0]
+        return self._get_related_words(args[0], 'synonym')
 
-        results = requests.get(
-                self._synonym_api.format(
-                    word=word,
-                    API_KEY=self.config['WORDNIK_API_KEY'])
-                ).json()
-
-        if not results:
-            return "I couldn't find anything for that."
-
-        return "Synonyms for {word}:\n{synonyms}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
-                word=word,
-                synonyms=', '.join(results[0]['words']),
-                )
-
-    _antonym_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes=antonym&limitPerRelationshipType=15&api_key={API_KEY}'
     @botcmd(split_args_with=None)
     def antonym(self, msg, args):
         """
         Look up antonyms for a word
         """
-        word = args[0]
+        return self._get_related_words(args[0], 'antonym')
 
-        results = requests.get(
-                self._antonym_api.format(
-                    word=word,
-                    API_KEY=self.config['WORDNIK_API_KEY'])
-                ).json()
-
-        if not results:
-            return "I couldn't find anything for that."
-
-        return "Antonyms for {word}:\n{antonyms}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
-                word=word,
-                antonyms=', '.join(results[0]['words']),
-                )
-
-    _rhyme_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes=rhyme&limitPerRelationshipType=15&api_key={API_KEY}'
     @botcmd(split_args_with=None)
     def rhyme(self, msg, args):
         """
         Look up rhymes for a word
         """
-        word = args[0]
+        return self._get_related_words(args[0], 'rhyme')
 
+    _related_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes={relation}&limitPerRelationshipType=15&api_key={API_KEY}'
+    def _get_related_words(self, word, relation):
         results = requests.get(
-                self._rhyme_api.format(
+                self._related_api.format(
                     word=word,
+                    relation=relation,
                     API_KEY=self.config['WORDNIK_API_KEY'])
                 ).json()
 
         if not results:
             return "I couldn't find anything for that."
 
-        return "Rhymes for {word}:\n{rhymes}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
+        return "{relation}s for {word}:\n{rhymes}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
+                relation=relation.capitalize(),
                 word=word,
                 rhymes=', '.join(results[0]['words']),
                 )
