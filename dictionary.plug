@@ -1,0 +1,9 @@
+[Core]
+Name = Dictionary
+Module = dictionary
+
+[Documentation]
+Description = Look up definitions, synonyms, and more -- powered by Wordnik!
+
+[Python]
+Version = 3
