@@ -72,3 +72,25 @@ class Dictionary(BotPlugin):
 
         return "\n".join(resp)
 
+    _synonym_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes=synonym&limitPerRelationshipType=15&api_key={API_KEY}'
+    @botcmd(split_args_with=None)
+    def synonym(self, msg, args):
+        """
+        Look up synonyms for a word
+        """
+        word = args[0]
+
+        results = requests.get(
+                self._synonym_api.format(
+                    word=word,
+                    API_KEY=self.config['WORDNIK_API_KEY'])
+                ).json()
+
+        if not results:
+            return "I couldn't find anything for that."
+
+        return "Synonyms for {word}:\n{synonyms}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
+                word=word,
+                synonyms=', '.join(results[0]['words']),
+                )
+
