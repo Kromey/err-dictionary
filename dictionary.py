@@ -24,14 +24,16 @@ class Dictionary(BotPlugin):
                 }
 
     _define_api = 'http://api.wordnik.com/v4/word.json/{word}/definitions?limit=5&includeRelated=true&useCanonical=true&includeTags=false&api_key={API_KEY}'
-    @botcmd
+    @botcmd(split_args_with=None)
     def define(self, msg, args):
         """
         Define a word
         """
+        word = args[0]
+
         results = requests.get(
                 self._define_api.format(
-                    word=args,
+                    word=word,
                     API_KEY=self.config['WORDNIK_API_KEY'])
                 ).json()
 
@@ -55,7 +57,7 @@ class Dictionary(BotPlugin):
         # Make sure we cite the last dictionary in our results as well
         resp.append(last_source)
         # Attribute to Wordnik
-        resp.append("Powered by Wordnik -- https://www.wordnik.com/words/{word}".format(word=args))
+        resp.append("Powered by Wordnik -- https://www.wordnik.com/words/{word}".format(word=word))
 
         return "\n".join(resp)
 
