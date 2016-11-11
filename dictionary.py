@@ -94,3 +94,25 @@ class Dictionary(BotPlugin):
                 synonyms=', '.join(results[0]['words']),
                 )
 
+    _antonym_api = 'http://api.wordnik.com/v4/word.json/{word}/relatedWords?useCanonical=true&relationshipTypes=antonym&limitPerRelationshipType=15&api_key={API_KEY}'
+    @botcmd(split_args_with=None)
+    def antonym(self, msg, args):
+        """
+        Look up antonyms for a word
+        """
+        word = args[0]
+
+        results = requests.get(
+                self._antonym_api.format(
+                    word=word,
+                    API_KEY=self.config['WORDNIK_API_KEY'])
+                ).json()
+
+        if not results:
+            return "I couldn't find anything for that."
+
+        return "Antonyms for {word}:\n{antonyms}\nPowered by Wordnik -- https://www.wordnik.com/words/{word}".format(
+                word=word,
+                antonyms=', '.join(results[0]['words']),
+                )
+
