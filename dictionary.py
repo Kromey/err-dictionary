@@ -39,6 +39,7 @@ class Dictionary(BotPlugin):
             return "I couldn't find anything for that."
 
         resp = []
+        last_source = results[0]['attributionText']
         for result in results:
             line = "{:d}: {}".format(
                     int(result['sequence'])+1,
@@ -46,6 +47,13 @@ class Dictionary(BotPlugin):
                     )
             resp.append(line)
 
+            # Make sure we cite dictionaries properly
+            if result['attributionText'] != last_source:
+                resp.append(last_source)
+                last_source = result['attributionText']
+
+        # Make sure we cite the last dictionary in our results as well
+        resp.append(last_source)
         # Attribute to Wordnik
         resp.append("Powered by Wordnik -- https://www.wordnik.com/words/{word}".format(word=args))
 
