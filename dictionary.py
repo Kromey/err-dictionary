@@ -41,10 +41,21 @@ class Dictionary(BotPlugin):
             return "I couldn't find anything for that."
 
         resp = []
+        # Canonicalize word
+        word = results[0]['word']
         last_source = results[0]['attributionText']
+        seq = 0
+        last_type = ''
         for result in results:
+            seq += 1
+            if result['partOfSpeech'] != last_type:
+                last_type = result['partOfSpeech']
+                resp.append("{}, {}:".format(
+                    word,
+                    last_type))
+
             line = "{:d}: {}".format(
-                    int(result['sequence'])+1,
+                    seq,
                     result['text'],
                     )
             resp.append(line)
