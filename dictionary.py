@@ -46,5 +46,8 @@ class Dictionary(BotPlugin):
                     )
             resp.append(line)
 
+        # Attribute to Wordnik
+        resp.append("Powered by Wordnik -- https://www.wordnik.com/words/{word}".format(word=args))
+
         return "\n".join(resp)
 
